@@ -4,17 +4,19 @@ import Paper from 'material-ui/Paper'
 import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton'
 
+import ListView from './ListView'
+
 const style = {
     margin: 20,
     textAlign: 'center',
 }
 
+const API_URL = 'https://test-backend-98861.firebaseio.com'
+
 class ToDoApp extends React.Component {
 
     state = {
-        tasks: [{ taskName: 'Odkurzando', completed: false },
-        { taskName: 'Nakarmić kota', completed: false }
-        ],
+        tasks: [],
         taskName: ''
     }
 
@@ -23,10 +25,37 @@ class ToDoApp extends React.Component {
     }
 
     handleClick = () => {
-        let tasks = this.state.tasks
-        tasks.push({ taskName: this.state.taskName, completed: false })
-        this.setState({ tasks }) //{ tasks: tasks }
+        if (this.state.taskName !== '') {
+
+            let tasks = this.state.tasks
+            let newTask = { taskName: this.state.taskName, completed: false }
+
+            fetch(`${API_URL}/todo-tasks/.json`, {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(newTask)
+            }).then(response => response.json())
+                .then(data => {
+                    newTask.id = data.name
+                    tasks.push(newTask)
+                    this.setState({ tasks, taskName: '' })
+                })
+                .catch(error => console.error('Error:', error));
+        }
     }
+
+    componentWillMount() {
+        fetch(`${API_URL}/todo-tasks/.json`)
+            .then(response => response.json())
+            .then(data => {
+                const array = Object.entries(data)
+                const tasksList = array.map(([id, values]) => {
+                    values.id = id
+                    return values
+                })
+                this.setState({ tasks: tasksList })
+            })
+    }
+
 
     render() {
         return (
@@ -36,9 +65,10 @@ class ToDoApp extends React.Component {
                 <div>
 
                     <TextField
-                        hintText="Ente your task here"
+                        hintText="Enter your task here"
                         fullWidth={true}
                         onChange={this.handleChange}
+                        value={this.state.taskName}
                     />
                 </div>
                 <div>
@@ -50,9 +80,18 @@ class ToDoApp extends React.Component {
                     />
                 </div>
                 <div>
-                    {this.state.tasks.map((task, index) => (
-                        <div>{task.taskName}</div>
+                    {this.state.tasks.map((task) => (
+                        <div
+                            key={task.id}
+                        >
+                            {task.taskName}
+                        </div>
                     ))}
+                </div>
+                <div>
+                    <ListView>
+
+                    </ListView>
                 </div>
             </Paper>
         )
