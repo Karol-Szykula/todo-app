@@ -24,7 +24,14 @@ class ToDoApp extends React.Component {
         this.setState({ taskName: event.target.value })
     }
 
+    onEnter = (e) => {
+        if (e.keyCode === 13) {
+            this.handleClick()
+        }
+    }
+
     handleClick = () => {
+
         if (this.state.taskName !== '') {
 
             let tasks = this.state.tasks
@@ -42,6 +49,8 @@ class ToDoApp extends React.Component {
                 .catch(error => console.error('Error:', error));
         }
     }
+
+
 
     componentWillMount() {
         fetch(`${API_URL}/todo-tasks/.json`)
@@ -69,6 +78,7 @@ class ToDoApp extends React.Component {
                         fullWidth={true}
                         onChange={this.handleChange}
                         value={this.state.taskName}
+                        onKeyDown={this.onEnter}
                     />
                 </div>
                 <div>
