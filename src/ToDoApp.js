@@ -85,6 +85,20 @@ class ToDoApp extends React.Component {
             })
     }
 
+    handleCheck = (task) => {
+        // task.completed = !task.completed
+
+        // fetch(`${API_URL}/todo-tasks/${task.id}.json`, {
+        //     method: 'PUT',
+        //     body: JSON.stringify(task)
+        // })
+
+        fetch(`${API_URL}/todo-tasks/${task.id}.json`, {
+            method: 'PATCH',
+            body: JSON.stringify({ completed: !task.completed })
+        })
+            .then(() => this.loadData())
+    }
 
     render() {
         return (
@@ -115,7 +129,8 @@ class ToDoApp extends React.Component {
                             primaryText={task.taskName}
                             leftCheckbox={
                                 <Checkbox
-                                    // onChange={}
+                                    defaultChecked={task.completed}
+                                    onCheck={() => this.handleCheck(task)}
                                 />
                             }
                             rightIconButton={
