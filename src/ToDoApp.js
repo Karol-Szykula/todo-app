@@ -3,8 +3,10 @@ import React from 'react'
 import Paper from 'material-ui/Paper'
 import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton'
-
-import ListView from './ListView'
+import { List, ListItem } from 'material-ui/List'
+import Checkbox from 'material-ui/Checkbox'
+import DeleteIcon from 'material-ui/svg-icons/action/delete'
+import { IconButton } from 'material-ui';
 
 const style = {
     margin: 20,
@@ -53,11 +55,12 @@ class ToDoApp extends React.Component {
         }
     }
 
-    componentWillMount() {
+    loadData() {
         fetch(`${API_URL}/todo-tasks/.json`)
             .then(response => response.json())
             .then(data => {
                 if (!data) {
+                    this.setState({ tasks: [] })
                     return
                 }
                 const array = Object.entries(data)
@@ -69,6 +72,19 @@ class ToDoApp extends React.Component {
             })
     }
 
+    componentWillMount() {
+        this.loadData()
+    }
+
+    handleDelete = (id) => {
+        fetch(`${API_URL}/todo-tasks/${id}.json`, {
+            method: 'DELETE'
+        })
+            .then(() => {
+                this.loadData()
+            })
+    }
+
 
     render() {
         return (
@@ -76,7 +92,6 @@ class ToDoApp extends React.Component {
                 style={style}
             >
                 <div>
-
                     <TextField
                         hintText="Enter your task here"
                         fullWidth={true}
@@ -93,20 +108,26 @@ class ToDoApp extends React.Component {
                         onClick={this.handleClick}
                     />
                 </div>
-                <div>
+                <List>
                     {this.state.tasks.map((task) => (
-                        <div
+                        <ListItem
                             key={task.id}
-                        >
-                            {task.taskName}
-                        </div>
+                            primaryText={task.taskName}
+                            leftCheckbox={
+                                <Checkbox
+                                    // onChange={}
+                                />
+                            }
+                            rightIconButton={
+                                <IconButton>
+                                    <DeleteIcon
+                                        onClick={() => this.handleDelete(task.id)}
+                                    />
+                                </IconButton>
+                            }
+                        />
                     ))}
-                </div>
-                <div>
-                    <ListView>
-
-                    </ListView>
-                </div>
+                </List>
             </Paper>
         )
     }
