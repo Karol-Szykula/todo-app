@@ -2,6 +2,7 @@
   "name": "todo-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://github.com/Karol-Szykula/todo-app/",
   "dependencies": {
     "material-ui": "^0.20.2",
     "react": "^16.6.3",
@@ -9,8 +10,8 @@
     "react-scripts": "2.1.1"
   },
   "scripts": {
-    "deploy": "gh-pages -d dist",
-    "start": "react-scripts start",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
