@@ -26,12 +26,15 @@ class ToDoApp extends React.Component {
 
     onEnter = (e) => {
         if (e.keyCode === 13) {
-            this.handleClick()
+            this.addTask()
         }
     }
 
     handleClick = () => {
+        this.addTask()
+    }
 
+    addTask = () => {
         if (this.state.taskName !== '') {
 
             let tasks = this.state.tasks
@@ -50,12 +53,13 @@ class ToDoApp extends React.Component {
         }
     }
 
-
-
     componentWillMount() {
         fetch(`${API_URL}/todo-tasks/.json`)
             .then(response => response.json())
             .then(data => {
+                if (!data) {
+                    return
+                }
                 const array = Object.entries(data)
                 const tasksList = array.map(([id, values]) => {
                     values.id = id
